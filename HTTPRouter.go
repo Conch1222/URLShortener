@@ -10,7 +10,7 @@ func setRouter() {
 
 	r.POST("/api/shorten", shorten)
 
-	err := r.Run("8080") //set port
+	err := r.Run(":8080") //set port
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
