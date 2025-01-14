@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/deatil/go-encoding/encoding"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func shorten(c *gin.Context) {
@@ -16,16 +17,31 @@ func shorten(c *gin.Context) {
 	}
 
 	shortURL := generateShortURL(urlRequest.LongUrl)
+	expiration, err := generateExpiration(urlRequest.Expiration)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"shortURL": shortURL})
+	c.JSON(http.StatusOK, gin.H{
+		"shortURL":   shortURL,
+		"expiration": expiration,
+	})
 }
 
-func generateShortURL(longURL string) string {
+func generateShortURL(shortURLSuffix string) string {
 	var sb strings.Builder
-	suffix := encoding.FromString(longURL).Base62Encode().ToString()
-
 	sb.WriteString("http://shortURL/")
-	sb.WriteString(suffix)
+	sb.WriteString(shortURLSuffix)
 
 	return sb.String()
+}
+
+func generateExpiration(expiration string) (int64, error) {
+	duration, err := time.ParseDuration(expiration)
+	if err != nil {
+		return -1, errors.New("invalid expiration format")
+	}
+	ttl := int64(duration.Seconds())
+	return ttl, nil
 }
