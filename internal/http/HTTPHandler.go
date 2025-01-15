@@ -1,6 +1,8 @@
-package main
+package http
 
 import (
+	"URLShortener/internal/database"
+	"URLShortener/type"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -10,14 +12,20 @@ import (
 
 func shorten(c *gin.Context) {
 
-	var urlRequest URLRequest
+	var urlRequest _type.URLRequest
 	if err := c.BindJSON(&urlRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	shortURL := generateShortURL(urlRequest.LongUrl)
+	db := database.ConnectDB()
 	expiration, err := generateExpiration(urlRequest.Expiration)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	shortURL, err := db.SaveShortURLRecord(urlRequest.LongUrl, expiration)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -29,7 +37,7 @@ func shorten(c *gin.Context) {
 	})
 }
 
-func generateShortURL(shortURLSuffix string) string {
+func GenerateShortURL(shortURLSuffix string) string {
 	var sb strings.Builder
 	sb.WriteString("http://shortURL/")
 	sb.WriteString(shortURLSuffix)

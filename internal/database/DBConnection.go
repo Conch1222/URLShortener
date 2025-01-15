@@ -1,8 +1,9 @@
-package main
+package database
 
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"sync"
 )
 
@@ -15,7 +16,7 @@ type DBConnection struct {
 var DBConn *DBConnection
 var onceDBConn sync.Once
 
-func connectDB() *DBConnection {
+func ConnectDB() *DBConnection {
 	onceDBConn.Do(func() {
 		db := initDB()
 		DBConn = db
@@ -27,7 +28,7 @@ func initDB() *DBConnection {
 	if DBConn == nil {
 		username := "admin"
 		password := "admin"
-		server := "127.0.0.1"
+		server := "localhost"
 		port := "3306"
 		database := "web_URL_Shortener"
 

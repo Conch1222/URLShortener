@@ -1,4 +1,4 @@
-package main
+package _type
 
 type URLRequest struct {
 	LongUrl    string `json:"long_url"`

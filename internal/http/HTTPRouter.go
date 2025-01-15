@@ -1,11 +1,11 @@
-package main
+package http
 
 import (
 	"github.com/gin-gonic/gin"
 	"log"
 )
 
-func setRouter() {
+func SetRouter() {
 	r := gin.Default()
 
 	r.POST("/api/shorten", shorten)

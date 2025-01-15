@@ -1,4 +1,4 @@
-package main
+package redis
 
 import (
 	"github.com/redis/go-redis/v9"
@@ -6,13 +6,13 @@ import (
 )
 
 type RedisConnection struct {
-	rdb *redis.Client
+	Rdb *redis.Client
 }
 
 var RedisConn *RedisConnection
 var onceRedisConn sync.Once
 
-func connectRedis() *RedisConnection {
+func ConnectRedis() *RedisConnection {
 	onceRedisConn.Do(func() {
 		rdb := initRedis()
 		RedisConn = rdb
@@ -27,7 +27,7 @@ func initRedis() *RedisConnection {
 			Password: "",
 			DB:       0,
 		})
-		return &RedisConnection{rdb: rdb}
+		return &RedisConnection{Rdb: rdb}
 	}
 	return RedisConn
 }
