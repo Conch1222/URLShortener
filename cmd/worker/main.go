@@ -1,13 +1,13 @@
-package worker
+package main
 
 import (
-	"URLShortener/internal/redis"
+	"URLShortener/internal/database"
 	"fmt"
 )
 
 func main() {
-	rdb := redis.ConnectRedis()
-	err := rdb.HandleExpirationURL()
+	db := database.ConnectDB()
+	err := db.HandleExpirationURL()
 	if err != nil {
 		fmt.Println(err)
 	}

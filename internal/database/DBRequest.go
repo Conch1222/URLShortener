@@ -1,7 +1,6 @@
 package database
 
 import (
-	"URLShortener/internal/http"
 	"URLShortener/internal/redis"
 	"context"
 	"fmt"
@@ -51,7 +50,7 @@ func (dbConn *DBConnection) SaveShortURLRecord(longURL string, expiration int64)
 
 	fmt.Println("Short URL stored in Redis with expiration:", expiration)
 
-	return http.GenerateShortURL(shortURL), nil
+	return shortURL, nil
 }
 
 func (dbConn *DBConnection) DeleteShortURLRecord(shortURL string) error {
@@ -63,4 +62,20 @@ func (dbConn *DBConnection) DeleteShortURLRecord(shortURL string) error {
 		fmt.Println("Deleted expired URL from DB:", shortURL)
 		return nil
 	}
+}
+
+func (dbConn *DBConnection) HandleExpirationURL() error {
+	rdb := redis.ConnectRedis()
+	pubsub := rdb.Rdb.PSubscribe(ctx, "__keyevent@0__:expired")
+
+	for msg := range pubsub.Channel() {
+		shortURL := msg.Payload
+		fmt.Println("Key expired:", shortURL)
+
+		err := dbConn.DeleteShortURLRecord(shortURL)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

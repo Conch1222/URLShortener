@@ -31,13 +31,15 @@ func shorten(c *gin.Context) {
 		return
 	}
 
+	shortURL = generateShortURL(shortURL)
+
 	c.JSON(http.StatusOK, gin.H{
 		"shortURL":   shortURL,
 		"expiration": expiration,
 	})
 }
 
-func GenerateShortURL(shortURLSuffix string) string {
+func generateShortURL(shortURLSuffix string) string {
 	var sb strings.Builder
 	sb.WriteString("http://shortURL/")
 	sb.WriteString(shortURLSuffix)
