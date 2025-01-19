@@ -39,6 +39,19 @@ func shorten(c *gin.Context) {
 	})
 }
 
+func redirectShorURL(c *gin.Context) {
+	db := database.ConnectDB()
+
+	shortURL := c.Param("shortURL")
+	longURL, err := db.GetLongURL(shortURL)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Redirect(302, longURL)
+}
+
 func generateShortURL(shortURLSuffix string) string {
 	var sb strings.Builder
 	sb.WriteString("http://shortURL/")

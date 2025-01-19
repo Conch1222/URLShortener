@@ -1,7 +1,7 @@
 package database
 
 import (
-	"URLShortener/internal/redis"
+	"URLShortener/internal/redisDatabase"
 	"context"
 	"fmt"
 	"github.com/deatil/go-encoding/encoding"
@@ -42,7 +42,7 @@ func (dbConn *DBConnection) SaveShortURLRecord(longURL string, expiration int64)
 		return "", err
 	}
 
-	rdb := redis.ConnectRedis()
+	rdb := redisDatabase.ConnectRedis()
 	err = rdb.Rdb.Set(ctx, shortURL, longURL, time.Duration(expiration)*time.Second).Err()
 	if err != nil {
 		return "", err
@@ -65,10 +65,10 @@ func (dbConn *DBConnection) DeleteShortURLRecord(shortURL string) error {
 }
 
 func (dbConn *DBConnection) HandleExpirationURL() error {
-	rdb := redis.ConnectRedis()
-	pubsub := rdb.Rdb.PSubscribe(ctx, "__keyevent@0__:expired")
+	rdb := redisDatabase.ConnectRedis()
+	pubSub := rdb.Rdb.PSubscribe(ctx, "__keyevent@0__:expired")
 
-	for msg := range pubsub.Channel() {
+	for msg := range pubSub.Channel() {
 		shortURL := msg.Payload
 		fmt.Println("Key expired:", shortURL)
 
@@ -78,4 +78,14 @@ func (dbConn *DBConnection) HandleExpirationURL() error {
 		}
 	}
 	return nil
+}
+
+func (dbConn *DBConnection) GetLongURL(shortURL string) (string, error) {
+	rdb := redisDatabase.ConnectRedis()
+	longURL, err := rdb.Rdb.Get(ctx, shortURL).Result()
+	if err != nil {
+		return "", err
+	}
+
+	return longURL, nil
 }
