@@ -10,11 +10,18 @@ import (
 	"time"
 )
 
+func mainPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "MainPage.html", gin.H{})
+}
+
 func shorten(c *gin.Context) {
 
 	var urlRequest _type.URLRequest
-	if err := c.BindJSON(&urlRequest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	urlRequest.LongUrl = c.PostForm("long_url")
+	urlRequest.Expiration = c.PostForm("expiration")
+
+	if urlRequest.LongUrl == "" || urlRequest.Expiration == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Lack of necessary data"})
 		return
 	}
 
@@ -54,7 +61,7 @@ func redirectShorURL(c *gin.Context) {
 
 func generateShortURL(shortURLSuffix string) string {
 	var sb strings.Builder
-	sb.WriteString("http://shortURL/")
+	sb.WriteString("http://localhost:8080/shorten/")
 	sb.WriteString(shortURLSuffix)
 
 	return sb.String()
