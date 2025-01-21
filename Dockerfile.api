@@ -1,0 +1,23 @@
+FROM golang:1.23.1-alpine AS builder
+
+WORKDIR /src
+
+COPY go.mod go.sum ./
+RUN go mod tidy
+
+COPY . .
+RUN go build -o api ./cmd/api/main.go
+
+
+FROM alpine:latest
+
+WORKDIR /app
+
+COPY --from=builder /src/api .
+COPY --from=builder /src/templates ./templates
+
+ENV GIN_MODE=release
+
+EXPOSE 8080
+
+CMD ["./api"]

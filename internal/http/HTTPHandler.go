@@ -50,7 +50,7 @@ func redirectShorURL(c *gin.Context) {
 	shortURL := c.Param("shortURL")
 	longURL, err := db.GetLongURL(shortURL)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
