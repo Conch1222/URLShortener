@@ -4,6 +4,7 @@ import (
 	"URLShortener/internal/database"
 	"URLShortener/type"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -40,10 +41,7 @@ func shorten(c *gin.Context) {
 
 	shortURL = generateShortURL(shortURL)
 
-	c.JSON(http.StatusOK, gin.H{
-		"shortURL":   shortURL,
-		"expiration": expiration,
-	})
+	c.Redirect(http.StatusFound, fmt.Sprintf("/result?short_url=%s", shortURL))
 }
 
 func redirectShorURL(c *gin.Context) {
@@ -57,6 +55,15 @@ func redirectShorURL(c *gin.Context) {
 	}
 
 	c.Redirect(302, longURL)
+}
+
+func result(c *gin.Context) {
+	shortURL := c.Query("short_url")
+	if shortURL == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing short_url parameter"})
+	}
+
+	c.HTML(http.StatusOK, "ResultPage.html", gin.H{"ShortURLLink": shortURL})
 }
 
 func generateShortURL(shortURLSuffix string) string {

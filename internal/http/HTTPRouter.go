@@ -13,6 +13,7 @@ func SetRouter() {
 	r.POST("/api/shorten", shorten)
 	r.GET("/shorten", mainPage)
 	r.GET("/shorten/:shortURL", redirectShorURL)
+	r.GET("/result", result)
 
 	err := r.Run(":8080") //set port
 	if err != nil {
