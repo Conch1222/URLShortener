@@ -8,6 +8,12 @@ services:
       MYSQL_PASSWORD: admin
       MYSQL_CHARSET: utf8mb4
       MYSQL_COLLATION: utf8mb4_unicode_ci
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
     ports:
       - "3307:3306"
     volumes:
@@ -17,6 +23,12 @@ services:
 
   redis:
     image: redis:6.2
+    command: ["redis-server", "--notify-keyspace-events", "Ex"]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     ports:
       - "6379:6379"
     networks:
@@ -60,8 +72,10 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
     depends_on:
-      - mysql-db
-      - redis
+      mysql-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - app-network
 

@@ -68,6 +68,7 @@ func (dbConn *DBConnection) HandleExpirationURL() error {
 	rdb := redisDatabase.ConnectRedis()
 	pubSub := rdb.Rdb.PSubscribe(ctx, "__keyevent@0__:expired")
 
+	fmt.Println("Subscribed to Redis expired events channel")
 	for msg := range pubSub.Channel() {
 		shortURL := msg.Payload
 		fmt.Println("Key expired:", shortURL)
