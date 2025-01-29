@@ -34,7 +34,7 @@ func initDB() *DBConnection {
 		database := os.Getenv("DB_NAME")
 
 		fmt.Println("Connecting to " + database)
-		conn := fmt.Sprintf("%s:%s@%s(%s:%s)/%s", username, password, NETWORK, server, port, database)
+		conn := fmt.Sprintf("%s:%s@%s(%s:%s)/%s?parseTime=true", username, password, NETWORK, server, port, database)
 		db, err := sql.Open("mysql", conn)
 		if err != nil {
 			fmt.Println("Open Mysql error: ", err)

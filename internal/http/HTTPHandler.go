@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -67,8 +68,14 @@ func result(c *gin.Context) {
 }
 
 func generateShortURL(shortURLSuffix string) string {
+	host := os.Getenv("BASE_URL")
+	if host == "" {
+		host = "http://localhost:8080" // 預設本地開發環境
+	}
+
 	var sb strings.Builder
-	sb.WriteString("http://localhost:8080/shorten/")
+	sb.WriteString(host)
+	sb.WriteString("/shorten/")
 	sb.WriteString(shortURLSuffix)
 
 	return sb.String()

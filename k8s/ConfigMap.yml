@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  MYSQL_HOST: "mysql-db"
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: "web_URL_Shortener"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: ""
+  DB_HOST: "mysql-db"
+  DB_PORT: "3306"
+  DB_NAME: "web_URL_Shortener"
