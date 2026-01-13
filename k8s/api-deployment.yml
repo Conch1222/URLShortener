@@ -18,10 +18,10 @@ spec:
           command: [ 'sh', '-c', 'until nc -z mysql-db 3306; do echo waiting for mysql; sleep 2; done;' ]
       containers:
         - name: api
-          image: conch2147/url-shortener:latest
+          image: asia-east1-docker.pkg.dev/root-rarity-426706-v2/urlshortener/web:v01
           env:
             - name: BASE_URL
-              value: "http://localhost:30080"
+              value: "http://35.236.143.178"
           envFrom:
             - configMapRef:
                 name: app-config

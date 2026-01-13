@@ -42,13 +42,8 @@ spec:
           ports:
             - containerPort: 3306
           readinessProbe:
-            exec:
-              command:
-                - mysqladmin
-                - ping
-                - "-h127.0.0.1"
-                - "-uadmin"
-                - "-padmin"
+            tcpSocket:
+               port: 3306
             initialDelaySeconds: 30
             periodSeconds: 10
       volumes:

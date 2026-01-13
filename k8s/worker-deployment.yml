@@ -18,7 +18,7 @@ spec:
           command: [ 'sh', '-c', 'until nc -z mysql-db 3306; do echo waiting for mysql; sleep 2; done;' ]
       containers:
         - name: worker
-          image: conch2147/url-shortener-worker:latest
+          image: asia-east1-docker.pkg.dev/root-rarity-426706-v2/urlshortener/worker:v01
           envFrom:
             - configMapRef:
                 name: app-config
